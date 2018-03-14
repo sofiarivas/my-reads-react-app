@@ -21,8 +21,8 @@ class ListBooks extends Component {
             </div>
             <div className="list-books-content">
               <div>
-            	{this.state.availableShelfs.map((shelf) => (
-      			  <BookShelf currentShelf={shelf} currentBooks={this.filterByShelf(this.props.books, shelf)} />
+            	{this.state.availableShelfs.map((shelf, index) => (
+      			  <BookShelf key={index} currentShelf={shelf} currentBooks={this.filterByShelf(this.props.books, shelf)} />
       	        ))}
               </div>
             </div>

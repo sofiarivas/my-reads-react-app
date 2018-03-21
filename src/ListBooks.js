@@ -6,7 +6,10 @@ import * as BooksAPI from './BooksAPI'
 
 class ListBooks extends Component {
   	state = {
-      availableShelfs: ['currentlyReading', 'read', 'wantToRead'],
+      availableShelfs: [
+        {id: 'currentlyReading', label: 'Currently Reading'}, 
+        {id: 'read', label: 'Read'},
+        {id: 'wantToRead', label: 'Want to read'}],
       books: []
     }
     componentDidMount() {
@@ -41,7 +44,7 @@ class ListBooks extends Component {
             <div className="list-books-content">
               <div>
             	{this.state.availableShelfs.map((shelf, index) => (
-      			  <BookShelf key={index} updateBook={this.updateBook} currentShelf={shelf} currentBooks={this.filterByShelf(this.state.books, shelf)} />
+      			  <BookShelf key={index} updateBook={this.updateBook} currentShelf={shelf.label} currentBooks={this.filterByShelf(this.state.books, shelf.id)} />
       	        ))}
               </div>
             </div>

@@ -9,9 +9,13 @@ class SearchBook extends Component {
   }
 
   componentDidMount() {
+	this.getAllBooks()
+  }
+
+  getAllBooks = () => {
     BooksAPI.getAll().then((books) => {
-    	this.setState({ books })	
-  	})
+      this.setState({ books })	
+    })
   }
 
   updateBook = (selectedBook, shelf) => {
@@ -26,9 +30,13 @@ class SearchBook extends Component {
   }
 
   searchBooks = (query, maxResults) => {
-    BooksAPI.search(query, maxResults).then((matchingBooks) => {
-      this.setState({ books: matchingBooks })
-    })
+    if(query !== '') {
+      BooksAPI.search(query, maxResults).then((matchingBooks) => {
+        this.setState({ books: matchingBooks })
+      })
+    } else {
+      this.getAllBooks()
+    }
   }
 
   render() {

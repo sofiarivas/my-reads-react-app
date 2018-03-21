@@ -1,7 +1,36 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
+import * as BooksAPI from './BooksAPI'
+import Book from './Book'
 
 class SearchBook extends Component {
+  state = {
+    books: []
+  }
+
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+    	this.setState({ books })	
+  	})
+  }
+
+  updateBook = (selectedBook, shelf) => {
+    this.setState(state => {
+	const unmodifyBooks = state.books.filter((book) => book.id !== selectedBook.id)
+	selectedBook.shelf = shelf
+    return {
+	  books: unmodifyBooks.concat(selectedBook)
+      }
+    })
+    BooksAPI.update(selectedBook, shelf)
+  }
+
+  searchBooks = (query, maxResults) => {
+    BooksAPI.search(query, maxResults).then((matchingBooks) => {
+      this.setState({ books: matchingBooks })
+    })
+  }
+
   render() {
     return (
     <div className="search-books">
@@ -11,24 +40,22 @@ class SearchBook extends Component {
       		className="close-search"
       	> Close </Link>
   		<div className="search-books-input-wrapper">
-  {/*
-                    NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                    You can find these search terms here:
-                    https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
+  		<input type="text" placeholder="Search by title or author" onChange={(event) => {this.searchBooks(event.target.value, 20)}}/>
 
-                    However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                    you don't find a specific author or title. Every search is limited by search terms.
-                  */}
-  <input type="text" placeholder="Search by title or author"/>
-
-  </div>
-  </div>
-  <div className="search-books-results">
-  <ol className="books-grid"></ol>
-  </div>
-      </div>
-    )
+    </div>
+    </div>
+    <div className="search-books-results">
+    <ol className="books-grid">
+      {this.state.books.map((book, index) => (
+        <li key={index}>
+          <Book details={book} updateBook={this.updateBook}/>
+        </li>
+      ))}
+    </ol>
+    </div>
+        </div>
+      )
+    }
   }
-}
 
 export default SearchBook

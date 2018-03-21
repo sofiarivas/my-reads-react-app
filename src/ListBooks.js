@@ -2,27 +2,46 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 import escapeRegExp from 'escape-string-regexp'
 import BookShelf from './BookShelf'
+import * as BooksAPI from './BooksAPI'
 
 class ListBooks extends Component {
   	state = {
-      availableShelfs: ['currentlyReading', 'read', 'wantToRead']
+      availableShelfs: ['currentlyReading', 'read', 'wantToRead'],
+      books: []
+    }
+    componentDidMount() {
+      BooksAPI.getAll().then((books) => {
+          this.setState({ books })	
+      })
+    }
+  	
+	updateBook = (selectedBook, shelf) => {
+      	this.setState(state => {
+	        const unmodifyBooks = state.books.filter((book) => book.id !== selectedBook.id)
+	        selectedBook.shelf = shelf
+          	return {
+	            books: unmodifyBooks.concat(selectedBook)
+            }
+        })
+    	BooksAPI.update(selectedBook, shelf)
     }
 
-  	filterByShelf = (books, shelf) => {
+	filterByShelf = (books, shelf) => {
       const match = new RegExp(escapeRegExp(shelf))
       let filteredBooks = books.filter((book) => match.test(book.shelf))
       return filteredBooks
     }
+
 	render() {
       return (
-        <div className="list-books">		    
+        <div className="list-books">
             <div className="list-books-title">
               <h1>My awesome reads</h1>
             </div>
             <div className="list-books-content">
               <div>
             	{this.state.availableShelfs.map((shelf, index) => (
-      			  <BookShelf key={index} currentShelf={shelf} currentBooks={this.filterByShelf(this.props.books, shelf)} />
+      			  <BookShelf key={index} updateBook={this.updateBook} currentShelf={shelf} currentBooks={this.filterByShelf(this.state.books, shelf)} />
       	        ))}
               </div>
             </div>

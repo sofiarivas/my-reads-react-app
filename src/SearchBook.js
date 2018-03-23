@@ -32,6 +32,12 @@ class SearchBook extends Component {
   searchBooks = (query, maxResults) => {
     if(query !== '') {
       BooksAPI.search(query, maxResults).then((matchingBooks) => {
+        this.state.books.forEach((book) => {
+          let bookHasShelfAssigned = matchingBooks.find((result) => result.id === book.id)
+          if (bookHasShelfAssigned) {
+            bookHasShelfAssigned.shelf = book.shelf
+          }
+        })
         this.setState({ books: matchingBooks })
       })
     } else {
